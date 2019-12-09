@@ -38,13 +38,13 @@ public class TestTimeTravelController {
 
     @Test
     public void testTodaysWords() throws Exception {
-        String words = mvc.perform(MockMvcRequestBuilders.get("/todays-words"))
+        String words = mvc.perform(MockMvcRequestBuilders.get("/api/todays-words"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(11))
                 .andReturn().getResponse().getContentAsString();
 
         mvc.perform(
-                MockMvcRequestBuilders.post("/check")
+                MockMvcRequestBuilders.post("/api/check")
                         .contentType(APPLICATION_JSON_UTF8)
                         .content(words))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -59,7 +59,7 @@ public class TestTimeTravelController {
         String words = "[\"word1\",\"word1\",\"word1\"]";
 
         mvc.perform(
-                MockMvcRequestBuilders.post("/check")
+                MockMvcRequestBuilders.post("/api/check")
                         .contentType(APPLICATION_JSON_UTF8)
                         .content(words))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -72,7 +72,7 @@ public class TestTimeTravelController {
         String request = "{\"perPage\": 10, \"page\": 0}";
 
         mvc.perform(
-                MockMvcRequestBuilders.post("/past-words")
+                MockMvcRequestBuilders.post("/api/past-words")
                         .contentType(APPLICATION_JSON_UTF8)
                         .content(request))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -86,7 +86,7 @@ public class TestTimeTravelController {
     @Test
     public void testToday() throws Exception {
         mvc.perform(
-                MockMvcRequestBuilders.get("/today")
+                MockMvcRequestBuilders.get("/api/today")
                         .contentType(APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.year").value(2000))

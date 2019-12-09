@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.primitives.Bytes;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.util.stream.IntStream;
  * |-------------|--------------|--------------|
  *
  */
+@Component
 public class StringCoder {
 
     private static final int DICTIONARY_SIZE = 4096;

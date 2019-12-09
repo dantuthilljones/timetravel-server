@@ -21,25 +21,25 @@ public class TimeTravelController {
         this.timeTravelLogic = Preconditions.checkNotNull(timeTravelLogic, "timeTravel is null");
     }
 
-    @GetMapping("/todays-words")
+    @GetMapping("/api/todays-words")
     @ResponseBody
     public List<String> todaysWords() throws InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchPaddingException {
         return timeTravelLogic.todaysWords();
     }
 
-    @GetMapping("/today")
+    @GetMapping("/api/today")
     @ResponseBody
     public Date today() {
         return timeTravelLogic.today();
     }
 
-    @PostMapping("/check")
+    @PostMapping("/api/check")
     @ResponseBody
     public Result checkWords(@RequestBody List<String> words) {
         return timeTravelLogic.checkWords(words);
     }
 
-    @PostMapping("/past-words")
+    @PostMapping("/api/past-words")
     @ResponseBody
     public Page<PastStringsEntry> checkWords(@RequestBody PastStringsRequest request) {
         return timeTravelLogic.getPastWords(request);
