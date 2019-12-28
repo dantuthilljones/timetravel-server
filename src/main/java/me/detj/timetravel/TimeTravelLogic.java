@@ -8,6 +8,7 @@ import me.detj.timetravel.coders.date.DateCoder;
 import me.detj.timetravel.date.DateSource;
 import me.detj.timetravel.coders.string.UnknownStringException;
 import me.detj.timetravel.coders.string.StringCoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
@@ -30,7 +31,7 @@ public class TimeTravelLogic {
     private final StringCoder stringCoder;
     private final Crypter crypter;
 
-    public TimeTravelLogic(DateSource currentDateSource, DateCoder dateCoder, StringCoder stringCoder, Crypter crypter, int keySize) {
+    public TimeTravelLogic(DateSource currentDateSource, DateCoder dateCoder, StringCoder stringCoder, Crypter crypter, @Value("${date.key.size:16}") int keySize) {
         this.currentDateSource = Preconditions.checkNotNull(currentDateSource, "currentDateSource is null");
         this.dateCoder = Preconditions.checkNotNull(dateCoder, "dateCoder is null");
         this.stringCoder = Preconditions.checkNotNull(stringCoder, "wordCoder is null");
@@ -70,7 +71,7 @@ public class TimeTravelLogic {
         try {
             return buildResult(getDate(words));
         } catch (Exception e) {
-            return buildFailureResult(e);
+            return buildFailureResult();
         }
     }
 
@@ -90,7 +91,7 @@ public class TimeTravelLogic {
         return new Page(request.getPage(), entries);
     }
 
-    private Result buildFailureResult(Exception e) {
+    private Result buildFailureResult() {
         return new Result(ResultStatus.ERROR, null);
     }
 

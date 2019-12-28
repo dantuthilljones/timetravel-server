@@ -4,6 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.primitives.Bytes;
+import me.detj.timetravel.util.Collections;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +15,7 @@ import javax.crypto.BadPaddingException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /*
@@ -41,33 +42,27 @@ import java.util.stream.IntStream;
  * |-------------|--------------|--------------|
  *
  */
-@Component
 public class StringCoder {
 
-    private static final int DICTIONARY_SIZE = 4096;
+    public static final int DICTIONARY_SIZE = 4096;
 
     private final List<String> dictionary;
     private final Map<String, Integer> toInt;
 
     public StringCoder(List<String> dictionary) {
         if (dictionary.size() != DICTIONARY_SIZE) {
-            throw new IllegalArgumentException("The dictionary must be of size 4096");
+            throw new IllegalArgumentException("The dictionary must be of size " + DICTIONARY_SIZE
+                    + ". Size was " + dictionary.size());
         } else if (ImmutableSet.copyOf(dictionary).size() != dictionary.size()) {
-            throw new IllegalArgumentException("The dictionary contains duplicates");
+            Set<String> duplicates = Collections.duplicates(dictionary);
+            throw new IllegalArgumentException("The dictionary contains the following duplicates: ["
+                    + Strings.join(duplicates, ',') + "]");
         }
 
         this.dictionary = dictionary;
         toInt = IntStream.range(0, DICTIONARY_SIZE)
                 .mapToObj(i -> i)
                 .collect(ImmutableMap.toImmutableMap(dictionary::get, i -> i));
-    }
-
-    @Bean
-    public static StringCoder defau1t() throws IOException {
-        String fileContents = new String(Files.readAllBytes(Paths.get("google-10000-english-no-swears.txt")));
-        String[] words = fileContents.split("\\r?\\n");
-        List<String> dictionary = Arrays.stream(words).limit(4096).collect(ImmutableList.toImmutableList());
-        return new StringCoder(dictionary);
     }
 
     /*

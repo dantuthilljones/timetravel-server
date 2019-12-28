@@ -1,6 +1,8 @@
 package me.detj.timetravel;
 
+import com.google.common.collect.ImmutableList;
 import me.detj.timetravel.coders.crypto.Crypter;
+import me.detj.timetravel.coders.string.StringCoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -12,7 +14,10 @@ import org.springframework.context.annotation.Bean;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 @SpringBootApplication
 public class TimeTravel extends SpringBootServletInitializer {
@@ -26,18 +31,26 @@ public class TimeTravel extends SpringBootServletInitializer {
         return args -> {
             System.out.println("Spring Boot Beans:");
 
-            String[] beanNames = ctx.getBeanDefinitionNames();
-            Arrays.sort(beanNames);
-            for (String beanName : beanNames) {
-                System.out.println(beanName);
-            }
+            Arrays.stream(ctx.getBeanDefinitionNames())
+                    .sorted()
+                    .map(name -> "-" + name)
+                    .forEachOrdered(System.out::println);
         };
     }
 
     @Bean
     @Autowired
-    public SecretKeySpec secretKeySpec(@Value("${crypto.password}") String password) throws IOException {
+    public SecretKeySpec secretKeySpec(@Value("${crypto.password}") String password) {
         byte[] key = Arrays.copyOf(password.getBytes(), 16);
         return new SecretKeySpec(key, Crypter.KEY_ALGORITHM);
+    }
+
+    @Bean
+    @Autowired
+    public StringCoder stringCoder(@Value("${strings.path}") String path) throws IOException {
+        String fileContents = new String(Files.readAllBytes(Paths.get(path)));
+        String[] words = fileContents.split("\\r?\\n");
+        List<String> dictionary = Arrays.stream(words).limit(StringCoder.DICTIONARY_SIZE).collect(ImmutableList.toImmutableList());
+        return new StringCoder(dictionary);
     }
 }
