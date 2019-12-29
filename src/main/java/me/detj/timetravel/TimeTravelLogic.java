@@ -76,6 +76,10 @@ public class TimeTravelLogic {
     }
 
     public Page<PastStringsEntry> getPastWords(PastStringsRequest request) {
+        Preconditions.checkArgument(request.getPerPage() > 0, "perPage must be greater than 0");
+        Preconditions.checkArgument(request.getPerPage() < 1000, "perPage must be less than 1000");
+        Preconditions.checkArgument(request.getPage() >= 0, "page number must positive");
+
         int daysStart = request.getPage() * request.getPerPage() + 1;
         int daysEnd = daysStart + request.getPerPage();
         List<PastStringsEntry> entries = IntStream.range(daysStart, daysEnd)

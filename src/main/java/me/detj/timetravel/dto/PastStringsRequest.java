@@ -10,10 +10,8 @@ public class PastStringsRequest {
     private final int page;
 
     @JsonCreator
-    public PastStringsRequest(@JsonProperty("perPage") int perPage, @JsonProperty("page") int page) {
-        Preconditions.checkArgument(perPage > 0, "perPage must be greater than 0");
-        Preconditions.checkArgument(page >= 0, "perPage must positive");
-
+    public PastStringsRequest(@JsonProperty("perPage") int perPage,
+                              @JsonProperty("page") int page) {
         this.perPage = perPage;
         this.page = page;
     }
