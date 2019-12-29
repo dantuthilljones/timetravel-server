@@ -41,7 +41,7 @@ public class TimeTravelController {
 
     @PostMapping("/api/past-words")
     @ResponseBody
-    public Page<PastStringsEntry> checkWords(@RequestBody PastStringsRequest request) {
+    public Page<PastStringsEntry> pastWords(@RequestBody PastStringsRequest request) {
         return timeTravelLogic.getPastWords(request);
     }
 }
